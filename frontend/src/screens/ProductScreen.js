@@ -7,7 +7,10 @@ import Message from '../components/Message'
 import Loader from '../components/Loader'
 import { listProductDetails } from '../actions/productActions'
 
+
+// the props history, match, and location that are included in each component that uses React Router.
 const ProductScreen = ({ history, match }) => {
+	// component state
 	const [qty, setQTY] = useState(1)
 
 	const dispatch = useDispatch()
@@ -18,6 +21,7 @@ const ProductScreen = ({ history, match }) => {
 	useEffect(() => {
 		dispatch(listProductDetails(match.params.id))
 	}, [dispatch, match])
+
 
 	const addToCartHandler = () => {
 		history.push(`/cart/${match.params.id}?qty=${qty}`)
@@ -73,30 +77,42 @@ const ProductScreen = ({ history, match }) => {
 										</Col>
 									</Row>
 								</ListGroup.Item>
-
-								{product.countInStock > 0 && (
-									<ListGroup.Item>
-										<Row>
-											<Col>Qty</Col>
-											<Col>
-												<Form.Control
-													as='select'
-													value={qty}
-													onChange={(e) => setQTY(e.target.value)}
-														>{
-																[...Array(product.countInStock).keys()].map(x => (
+								{
+									// only show qty selector (listgroup/form) if product is in stock
+									product.countInStock > 0 && (
+										<ListGroup.Item>
+											<Row>
+												<Col>Qty</Col>
+												<Col>
+													<Form.Control
+														// 'select' = select box
+														// 'value' = select box shows the value assinged to qty
+														// 'onChange' - sets the current state qty value
+														as='select'
+														value={qty}
+														onChange={(e) => setQTY(e.target.value)}
+													>
+														{
+															// limit select box to amount to stock amount by counting the number of keys within countInStock
+															// Keys method provides array of a given object's own enumerable property names.  in this case, if stock is 6, the method returns [0,1,2,3,4,5,6]
+															// map through it to put in select box. array starts at zero so add 1
+															[...Array(product.countInStock).keys()].map(
+																(x) => (
 																	<option key={x + 1} value={x + 1}>
 																		{x + 1}
 																	</option>
-																))}
-												</Form.Control>
-											</Col>
-										</Row>
-									</ListGroup.Item>
-								)}
+																)
+															)
+														}
+													</Form.Control>
+												</Col>
+											</Row>
+										</ListGroup.Item>
+									)
+								}
 								<ListGroup.Item>
-											<Button
-												onClick={addToCartHandler}
+									<Button
+										onClick={addToCartHandler}
 										className='btn-block'
 										type='button'
 										disabled={product.countInStock === 0}
