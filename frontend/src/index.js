@@ -1,14 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+// must wrap app with Provider from Redux, takes in store file
+import { Provider } from 'react-redux';
+import store from './store'
+
 import './quartz-bootstrap.min.css'
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
-  <React.StrictMode>
+  <Provider store={store}>
     <App />
-  </React.StrictMode>,
+  </Provider>,
   document.getElementById('root')
 );
 
